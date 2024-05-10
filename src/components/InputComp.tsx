@@ -1,5 +1,5 @@
 "use client"
-import React, { FormEvent } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { useTransition } from 'react';
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -28,15 +28,31 @@ import {
 } from "@/components/ui/select"
 import { FormSchema } from '@/lib/zSchema'
 import { Prisma } from '@/lib/prisma'
-import { addTask } from '@/actions';
+import { addTask, getCategory } from '@/actions';
 import { TaskInputSchema } from '../../schema';
 
+// Define an interface for the category
+interface Category {
+    id: number;
+    name: string;
+}
 
 
 type Props = {}
 
+
 export default function InputComp({ }: Props) {
     const [, startTransition] = useTransition();
+    const [categories, setCategories] = useState<Category[]>([]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const categories = await getCategory();
+            setCategories(categories);
+        };
+
+        fetchCategories();
+    }, []);
 
     const formRef = React.useRef<HTMLFormElement>(null);
 
@@ -52,14 +68,25 @@ export default function InputComp({ }: Props) {
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit((values) => {
+                    if (!values.title || !values.category) return;
+
                     startTransition(() => {
                         const formData = new FormData();
                         formData.append('title', values.title);
                         formData.append('category', values.category);
                         addTask(formData);
                     });
+                    toast({
+                        title: "Todo added successfully!",
+                        description: "Friday, February 10, 2023 at 5:57 PM",
+                    });
+
+                    // Use the reset method from react-hook-form to reset the form fields
+                    form.reset({
+                        title: "",
+                        category: "",
+                    });
                 })}
-                ref={formRef}
                 className="flex items-center justify-around gap-2"
             >
                 <FormField
@@ -74,8 +101,11 @@ export default function InputComp({ }: Props) {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="family">family</SelectItem>
-                                    <SelectItem value="school">school</SelectItem>
+                                    {categories.map((category) => (
+                                        <SelectItem key={category.id} value={category.name}>
+                                            {category.name}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             <FormMessage />

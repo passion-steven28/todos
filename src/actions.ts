@@ -51,7 +51,20 @@ export const deleteTask = async (id: number) => {
     revalidatePath('/');
 }
 
+export const createCategory = async (name: FormData) => {
+    await Prisma.category.create({
+        data: {
+            name: name.get('name') as string,
+        },
+    });
 
+    revalidatePath('/');
+}
+
+export const getCategory = async () => {
+    const categories = await Prisma.category.findMany();
+    return categories;
+}
 
 
 

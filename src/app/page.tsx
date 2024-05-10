@@ -9,14 +9,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import TodosListCard from "@/components/TodosListCard";
 
 
-async function getData() {
-  const todo = await Prisma.todo.findMany();
-  return todo;
-}
-
 export default async function Home() {
-  const data = await getData();
-  console.log(data);
+
 
   return (
     <main className="grid grid-cols-12 gap-4">
