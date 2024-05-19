@@ -28,8 +28,10 @@ import {
 } from "@/components/ui/select"
 import { FormSchema } from '@/lib/zSchema'
 import { Prisma } from '@/lib/prisma'
-import { addTask, getCategory } from '@/actions';
+import { addTask, getCategory } from '@/app/actions';
 import { TaskInputSchema } from '../../schema';
+
+import { useUser } from "@clerk/nextjs";
 
 // Define an interface for the category
 interface Category {
@@ -37,13 +39,15 @@ interface Category {
     name: string;
 }
 
+type Props = {
+    userId?: string | null;
+}
 
-type Props = {}
-
-
-export default function InputComp({ }: Props) {
+export default function InputComp({ userId }: Props) {
     const [, startTransition] = useTransition();
     const [categories, setCategories] = useState<Category[]>([]);
+
+    console.log(userId)
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -61,6 +65,7 @@ export default function InputComp({ }: Props) {
         defaultValues: {
             title: "",
             category: "",
+            userId: userId,
         },
     });
 
@@ -74,6 +79,10 @@ export default function InputComp({ }: Props) {
                         const formData = new FormData();
                         formData.append('title', values.title);
                         formData.append('category', values.category);
+                        // Ensure values.userId is a string before appending
+                        if (typeof values.userId === 'string') {
+                            formData.append('userId', values.userId);
+                        }
                         addTask(formData);
                     });
                     toast({
@@ -128,6 +137,20 @@ export default function InputComp({ }: Props) {
                         </FormItem>
                     )}
                 />
+                <input type="hidden" name="userId" value="userId" />
+                {/* <FormField
+                    control={form.control}
+                    name="userId"
+                    render={({ field }) => (
+                        <FormItem>
+                            <Input
+                             
+                                type="hidden"
+                            />
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                /> */}
                 <Button type="submit">Submit</Button>
             </form>
         </Form>

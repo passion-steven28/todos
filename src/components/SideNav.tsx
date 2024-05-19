@@ -3,6 +3,7 @@ import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import FilterMenu from './FilterMenu'
 import { Separator } from './ui/separator'
+import { UserButton } from '@clerk/nextjs'
 
 
 const SideNav = () => {
@@ -24,8 +25,7 @@ const SideNav = () => {
 
             <div className='absolute bottom-2 inset-x-0 flex items-center justify-center gap-4 w-full'>
                 <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <UserButton />
                 </Avatar>
                 <h1>passion steven</h1>
             </div>

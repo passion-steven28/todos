@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ClerkProvider, SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import { Inter,Noto_Sans_Cypriot } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider>
     <html lang="en">
       <body className={cn("grid grid-cols-12 gap-2 max-h-screen w-full", noto_sans_cypriot.className)}>
         <div className="col-start-1 col-end-3 min-h-screen relative">
@@ -33,6 +35,7 @@ export default function RootLayout({
         </main>
         <Toaster />
       </body>
-    </html>
+      </html>
+      </ClerkProvider>
   );
 }
